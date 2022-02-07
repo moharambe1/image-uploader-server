@@ -1,6 +1,7 @@
 import express, { NextFunction } from 'express';
 import multer, { MulterError }  from 'multer';
-import path from 'path/posix';
+import { extname } from 'node:path';
+
 
 const Port = process.env.PORT || 5000;
 
@@ -11,7 +12,7 @@ app.use(express.static('public'));
 const upload=multer({
   dest:"./upload",
   fileFilter:(req,file,callback)=>{
-    const ext= path.extname(file.originalname);
+    const ext= extname(file.originalname);
     if(ext !=='.png' && ext !== '.jng' && ext !=='.gif' && ext !=='.jpeg')
       return callback(new MulterError("LIMIT_UNEXPECTED_FILE", ));
     callback(null,true);
