@@ -1,6 +1,6 @@
 import express, { NextFunction } from 'express';
 import multer, { MulterError }  from 'multer';
-import { extname } from 'node:path';
+import { extname } from 'path';
 
 
 const Port = process.env.PORT || 5000;
