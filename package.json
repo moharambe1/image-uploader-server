@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node lib/app.js",
-    "build": "tsc -p ."
+    "build": "npm install && tsc -p ."
   },
   "repository": {
     "type": "git",
