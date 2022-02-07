@@ -2,7 +2,7 @@ import express, { NextFunction } from 'express';
 import multer, { MulterError }  from 'multer';
 import path from 'path/posix';
 
-const Port = process.env.Port|| 5000;
+const Port = process.env.PORT || 5000;
 
 const app = express();
 
