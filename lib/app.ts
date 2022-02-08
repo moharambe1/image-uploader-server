@@ -1,23 +1,34 @@
-import express, { NextFunction } from 'express';
-import multer, { MulterError }  from 'multer';
+import express from 'express';
+import multer  from 'multer';
+import pql from './db/repository';
 
 
 
 const Port = process.env.PORT || 5000;
-
+const MaxFileSize=5*1000*1000;
 const app = express();
-
+const rootPath=__dirname.substring(0,__dirname.lastIndexOf('/'));
 app.use(express.static('public'));
 
+const storage=multer.memoryStorage();
+const buffer=new Map<string,Buffer>();
+
 const upload=multer({
-  dest:"./upload",
+  storage:storage,
   fileFilter:(req,file,callback)=>{
     const ext= file.originalname.substring(file.originalname.lastIndexOf("."));
-    console.log(ext);
+
     if(ext !=='.png' && ext !== '.jng' && ext !=='.gif' && ext !=='.jpeg')
-      return callback(new MulterError("LIMIT_UNEXPECTED_FILE", ));
+      return callback(new multer.MulterError("LIMIT_UNEXPECTED_FILE"));
+    
+    if(file.size>5.1e+2)
+      return callback(new multer.MulterError("LIMIT_FILE_SIZE"));
     callback(null,true);
   },
+  limits:{
+    fileSize:MaxFileSize,
+    files:1
+  }
 });
 
 //middleware
@@ -33,7 +44,6 @@ app.use(function(req, res, next) {
 
 
 
-
 //api
 app.post("/api/data", (req, res) => {
   console.log(req);
@@ -41,21 +51,37 @@ app.post("/api/data", (req, res) => {
 });
 
 
-app.post("/api/upload-img",upload.single('photo') ,(req,res)=>{
+app.post("/api/upload-img",upload.single('photo') ,async (req,res)=>{
   
-  const filename=req.file?.filename;
-  res.json({imgLink :"http://localhost:"+Port+"/api/img/"+ filename})
+  const filename=req.file?.originalname;
+  const namefile=Math.floor(Math.random()*975244)+200;
+  const data=req.file.buffer;
+  
+  await pql.savePhoto(namefile,data);
+
+  //buffer.set(filename,data);
+  //const data=pql.getPhoto(filename);
+  res.json({imgLink :"http://localhost:"+Port+"/api/img/"+ namefile})
 })
 
-app.get("/api/img/:id",(req,res)=>{
-  res.sendFile("/home/ahmed/development/node/image-uploader-server/upload/"+req.params.id);
+app.get("/api/img/:id",async (req,res)=>{
+  //res.set({'Content-Type':'application/png'});
+  const photoName=parseInt(req.params.id);
+
+  const data=await pql.getPhoto(photoName);
+
+  //res.json({imgLink :"http://localhost:"+Port+"/api/img/"+ filename})
+  res.send(data);
 });
 
 
-app.use((err:any, req:any, res:any, next:NextFunction)=> {
+app.use((err:any, req:any, res:any, next:any)=> {
   
   if(err instanceof multer.MulterError)
-    return res.status(400).json({message:'Only images are allowed'})
+    if(err.code ==='LIMIT_FILE_SIZE')
+      return res.status(400).json({message:'Max images size is 5Mbytes'})
+    if(err.code === 'LIMIT_UNEXPECTED_FILE')
+      return res.status(400).json({message:'Only images are allowed'})
   if(err)
    return res.status(400).json({message:err.message});
   
