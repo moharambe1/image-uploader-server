@@ -2,9 +2,14 @@ import { PoolConfig } from "pg";
 import mng_psql from "./mng_psql";
 
 const psqlCrdl:PoolConfig={
-  connectionString:"postgres://uploader_shkv_user:5dq8C67d0Im8EdtjGn4PgRSvuZHshfzp@frankfurt-postgres.render.com/uploader_shkv",
-  ssl:true,
-  max:20,
+  connectionString:process.env.PG_CONNECT_STRING || null,
+  ssl:process.env.PG_SSL==="true" || true,
+  max:parseInt(process.env.PG_MAX)||20,
+  host:process.env.PG_HOST||null,
+  database:process.env.PG_DATABASE||null,
+  user:process.env.PG_USER||null,
+  password:process.env.PG_PASSWORD||null,
+
   
 }
 

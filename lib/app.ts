@@ -6,6 +6,8 @@ import pql from './db/repository';
 
 const Port = process.env.PORT || 5000;
 const MaxFileSize=5*1000*1000;
+const DominUrl=process.env.DOMAIN_URL|| "http://localhost:"+Port;
+
 const app = express();
 const rootPath=__dirname.substring(0,__dirname.lastIndexOf('/'));
 app.use(express.static('public'));
@@ -56,12 +58,12 @@ app.post("/api/upload-img",upload.single('photo') ,async (req,res)=>{
   const filename=req.file?.originalname;
   const namefile=Math.floor(Math.random()*975244)+200;
   const data=req.file.buffer;
-  
+
   await pql.savePhoto(namefile,data);
 
   //buffer.set(filename,data);
   //const data=pql.getPhoto(filename);
-  res.json({imgLink :"http://localhost:"+Port+"/api/img/"+ namefile})
+  res.json({imgLink :DominUrl+"/api/img/"+ namefile})
 })
 
 app.get("/api/img/:id",async (req,res)=>{
@@ -91,5 +93,5 @@ app.use((err:any, req:any, res:any, next:any)=> {
 
 //server
 app.listen(Port, () => {
-  console.log(`server listening at http://localhost:${Port}`)
+  console.log(`server listening at ${DominUrl}`)
 });
