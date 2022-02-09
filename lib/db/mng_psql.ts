@@ -3,20 +3,22 @@ import { Pool, PoolConfig, QueryConfig } from "pg";
 
 class mng_psql {
   m_pool: Pool;
-  m_credential: PoolConfig;
-  constructor(crodential: PoolConfig) {
+  m_credential: () => PoolConfig;
+  constructor(crodential :()=>PoolConfig) {
     this.m_credential = crodential;
     this.init();
 
   }
   async init(): Promise<void> {
-    this.m_pool = new Pool(this.m_credential);
+    this.m_pool = new Pool(this.m_credential());
 
     try {
       await this.m_pool.connect();
-      console.error("connecting to Postgress DataBase name " + this.m_credential.database + " successfully");
+      console.error("connecting to Postgress DataBase name " + this.m_credential().database + " successfully");
     } catch (err) {
       console.error("Cant connect to Postgres database :" + err.message);
+      console.log("reconnecting to Postgress Database in 5s");
+      setTimeout(this.init.bind(this),5000);
     }
   };
 
