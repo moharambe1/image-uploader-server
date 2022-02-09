@@ -18,6 +18,7 @@ class mng_psql {
     } catch (err) {
       console.error("Cant connect to Postgres database :" + err.message);
       console.log("reconnecting to Postgress Database in 5s");
+      console.log(this.m_credential());
       setTimeout(this.init.bind(this),5000);
     }
   };
