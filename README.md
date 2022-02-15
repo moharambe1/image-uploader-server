@@ -18,9 +18,9 @@ Image Uploader application is a cloud-enabled, mobile-ready.
 
 ## Overview
 
-![](https://github.com/moharambe1/image-uploader/tree/master/screenshot/1.png "upload img page")
-![](https://github.com/moharambe1/image-uploader/blob/master/screenshot/2.png "loading page")
-![](https://github.com/moharambe1/image-uploader/blob/master/screenshot/3.png "succes uploading page")
+![alt text](https://github.com/moharambe1/image-uploader/blob/master/screenshot/1.png "uploading page")
+![alt text](https://github.com/moharambe1/image-uploader/blob/master/screenshot/2.png "loading page")
+![alt text](https://github.com/moharambe1/image-uploader/blob/master/screenshot/3.png "succes uploading page")
 
 ## Tech
 Image Uploader uses a number of open source projects to work properly:
